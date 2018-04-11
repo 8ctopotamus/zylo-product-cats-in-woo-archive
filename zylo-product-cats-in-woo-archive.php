@@ -38,39 +38,41 @@ function is_subcategory($cat_id = null) {
 
 // generate nav
 function zylo_product_subcategories( $args = array() ) {
-  global $wp;
-  $catId = get_queried_object_id();
-  $currentCatName = get_queried_object()->name;
+	if (is_archive() && !is_shop()) {
+		global $wp;
+	  $catId = get_queried_object_id();
+	  $currentCatName = get_queried_object()->name;
 
-  if (is_subcategory($catId)) {
-    $parentID = get_queried_object()->parent;
-  } else {
-    $parentID = $catId;
-  }
+	  if (is_subcategory($catId)) {
+	    $parentID = get_queried_object()->parent;
+	  } else {
+	    $parentID = $catId;
+	  }
 
-  $args = array(
-    'taxonomy' => 'product_cat',
-    'parent' => $parentID,
-    'hierarchical' => 1,
-    'hide_empty' => false
-  );
+	  $args = array(
+	    'taxonomy' => 'product_cat',
+	    'parent' => $parentID,
+	    'hierarchical' => 1,
+	    'hide_empty' => false
+	  );
 
-  $subcats = get_terms($args);
+	  $subcats = get_terms($args);
 
-  if ($subcats) {
-    echo '<ul class="zylo-prod-cats-nav">';
-    foreach ($subcats as $cat) {
-      // determine active class
-      if ($currentCatName == $cat->name) {
-        $activeClass="active";
-      } else {
-        $activeClass = '';
-      }
-      echo '<li>';
-      echo '<a href="'. home_url($wp->request . '/' . $cat->slug) .'" class="'.$activeClass.'">' . $cat->name . '</a>';
-      echo '</li>';
-    }
-    echo '</ul>';
-  }
+	  if ($subcats) {
+	    echo '<ul class="zylo-prod-cats-nav">';
+	    foreach ($subcats as $cat) {
+	      // determine active class
+	      if ($currentCatName == $cat->name) {
+	        $activeClass="active";
+	      } else {
+	        $activeClass = '';
+	      }
+	      echo '<li>';
+	      echo '<a href="'. home_url($wp->request . '/' . $cat->slug) .'" class="'.$activeClass.'">' . $cat->name . '</a>';
+	      echo '</li>';
+	    }
+	    echo '</ul>';
+	  }
+	}
 }
 add_action( 'woocommerce_before_main_content', 'zylo_product_subcategories', 50 );
